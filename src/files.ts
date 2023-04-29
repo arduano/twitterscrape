@@ -48,7 +48,7 @@ export async function ensureFolderExists(path: string) {
   try {
     await fs.promises.mkdir(path, { recursive: true });
   } catch (e) {
-    if (e.code !== "EEXIST") {
+    if ((e as any).code !== "EEXIST") {
       throw e;
     }
   }
