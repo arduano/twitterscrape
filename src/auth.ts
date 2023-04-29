@@ -15,20 +15,20 @@ export async function createAuth(): Promise<TwitterSession> {
   console.log("Waiting for user to login...");
   console.log("Press enter to continue");
 
-  // Wait for user to press enter
-  await new Promise<void>((resolve) => {
-    process.stdin.once("data", () => {
-      resolve();
-    });
-  });
+  while (true) {
+    const cookies = await page.cookies();
+    const session: TwitterSession = {
+      cookies,
+    };
 
-  const cookies = await page.cookies();
-
-  await browser.close();
-
-  return {
-    cookies,
-  };
+    if (isSessionValid(session)) {
+      await browser.close();
+      return session;
+    } else {
+      // Wait 1 second
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
 }
 
 export function isSessionValid(session: TwitterSession) {

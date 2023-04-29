@@ -11,5 +11,8 @@
     "swc-node": "^1.0.0",
     "tsc": "^2.0.4",
     "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "scrape": "yarn swc-node src/run.ts"
   }
 }
