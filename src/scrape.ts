@@ -202,7 +202,7 @@ export async function getTweetStream(pageUrl: string, auth: TwitterSession) {
           addTweetsResolver = resolve;
         });
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
           await scrollToBottomTweet();
           let resolved = await Promise.race([
             resolverPromise.then(() => true),
