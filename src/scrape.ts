@@ -16,7 +16,9 @@ function getTweetData(tweet: any) {
     return null;
   }
 
-  if (result.__typename !== "Tweet") {
+  if (result.__typename === "TweetWithVisibilityResults") {
+    result = result.tweet;
+  } else if (result.__typename !== "Tweet") {
     return null;
   }
 
