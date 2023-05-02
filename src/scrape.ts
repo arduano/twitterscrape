@@ -224,7 +224,7 @@ export async function getTweetStream(pageUrl: string, auth: TwitterSession) {
           }
 
           console.log(
-            `Waiting longer than usual for tweets to load... ${i + 1}/5`
+            `Waiting longer than usual for tweets to load... ${i + 1}/3`
           );
         }
 
