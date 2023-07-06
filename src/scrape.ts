@@ -63,7 +63,7 @@ export async function getTweetStream(pageUrl: string, auth: TwitterSession) {
   const browser = await puppeteer.launch({ headless: false });
 
   const page = await browser.newPage();
-  page.setCookie(...auth.cookies);
+  await page.setCookie(...auth.cookies);
 
   await page.setRequestInterception(true);
 
