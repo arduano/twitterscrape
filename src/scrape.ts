@@ -79,7 +79,7 @@ export async function getTweetStream(pageUrl: string, auth: TwitterSession) {
 
   page.on("requestfinished", async (r) => {
     let url = r.url();
-    let userUrlRegex = /.+\/i\/api\/graphql\/\w+\/User/;
+    let userUrlRegex = /.+\/i\/api\/graphql\/[\-\w]+\/User/;
     if (!userUrlRegex.test(url)) {
       return;
     }
