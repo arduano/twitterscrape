@@ -9,8 +9,13 @@ function warnMissing(message: string) {
 }
 
 export type TweetData = NonNullable<ReturnType<typeof getTweetData>>;
+
+function isTweetObject(obj: any) {
+  return !!obj?.tweet_results;
+}
+
 function getTweetData(tweet: any) {
-  let result = tweet?.content?.itemContent?.tweet_results?.result;
+  let result = tweet.tweet_results?.result;
 
   if (!result) {
     return null;
@@ -84,21 +89,37 @@ export async function getTweetStream(pageUrl: string, auth: TwitterSession) {
       return;
     }
     let data = await r.response()?.json();
-    let innerData: any[] | undefined =
+    let instructions: any[] | undefined =
       data?.data?.user?.result?.timeline_v2?.timeline?.instructions;
-    if (!innerData) {
+    if (!instructions) {
       return;
     }
 
-    let addedEntries = innerData.flatMap((entry) => {
-      if (entry.type == "TimelineAddEntries") {
-        return entry.entries;
+    let addedEntries = instructions.flatMap((instruction) => {
+      if (instruction.type == "TimelineAddEntries") {
+        return instruction.entries.flatMap((e: any) => {
+          if (e.content?.entryType == "TimelineTimelineModule") {
+            return e.content.items.map((i: any) => i.item.itemContent);
+          } else if (e.content?.entryType == "TimelineTimelineItem") {
+            return [e.content.itemContent];
+          }
+          return [];
+        });
+      } else if (instruction.type == "TimelineAddToModule") {
+        return instruction.moduleItems.map((e: any) => e?.item?.itemContent);
       } else {
         return [];
       }
     });
 
-    let tweetData = addedEntries.map(getTweetData).filter(isTruthy);
+    console.log(addedEntries);
+    // console.log(addedEntries.length);
+
+    let tweetData = addedEntries
+      .filter(isTruthy)
+      .filter(isTweetObject)
+      .map(getTweetData)
+      .filter(isTruthy);
 
     foundTweets.push(...tweetData);
     addTweetsResolver();
